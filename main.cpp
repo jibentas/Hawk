@@ -1175,27 +1175,26 @@ void Altimeter_Draw()
 	alt = netbuf.flight.altitude;
 	int tenthou = int(alt / 10000.0);
 	int thou = int((alt - (tenthou * 10000)) / 1000.0);
-	int hun = int(alt - (tenthou * 10000) - (thou * 1000));
+	int hun = int((alt - (tenthou * 10000) - (thou * 1000)) / 100.0);
+	int hun_rem = int((alt - (tenthou * 10000) - (thou * 1000)));
 	// Draw the ten-thou box first. Use the checker box if it's zero.
 	yo = tenthou * (34.0 * px);
-	// if thousands are >= 9 then need a partial shift.
-	int rem = 0;
-	if (thou >= 9)
+	// Now take into account the value of the hundreds, to give us that "mid shift" look.
+	// Only shift IF we're at or above 900 and use value of tens to give the shift.
+	float frem = 0.0;
+	frem = alt - (tenthou * 10000) - (thou * 1000) - (hun * 100);
+	if (thou >= 9 && hun_rem >= 900)
 	{
-		rem = int(alt - (tenthou * 10000) - (thou * 1000));
-		yo += rem * 0.034 * px;
+		yo += frem * 0.34 * px;
 	}
 	DrawTexi(1201, 684, 16, 24, 0.0f, 0.009765625f + yo, 0.015625f, 0.033203125f + yo);
 
 	// Draw the thousands value.
 	yo = thou * 34.0 * px;
-	// Now take into account the value of the hundreds, to give us that "mid shift" look.
-	// Only shift IF we're at or above 900 and use value of tens to give the shift.
-	float frem = 0.0;
-	frem = alt - (tenthou * 10000) - (thou * 1000) - (hun * 100);
-	if (hun >= 900)
+	// if hundreds are >= 9 then need a partial shift.
+	if (hun_rem >= 900)
 	{
-		yo += frem * 0.034 * px;
+		yo += frem * 0.34 * px;
 	}
 	DrawTexi(1220, 679, 16, 34, 0.021484375f, 0.0048828125f + yo, 0.037109375f, 0.0380859375f + yo);
 
@@ -1226,7 +1225,7 @@ void Altimeter_Draw()
 		glBindTexture(GL_TEXTURE_2D, tex[txPARTS].texID);
 		glPushMatrix();
 			glTranslated(127, 127, 0);
-			float pangle = -90.0 - (hun * 0.36f);
+			float pangle = -90.0 - (hun_rem * 0.36f);
 			glRotatef(pangle, 0.0, 0.0, 1.0);
 			glTranslated(-127, -127, 0);
 			DrawTex(127.0f-105.0f, 127.0f-9.5f, 145, 21, 0.0f, 0.798828125f, 0.1416015625f, 0.8193359375f);	// Pointer
