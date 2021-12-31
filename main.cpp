@@ -1,6 +1,6 @@
 ﻿#define PROGNAME "X-Panel for Hawk"
 #define VERSION	 "0.0.38"
-#define AUTHOR	 "Roy Coates/Jacob Phillips, 2018-20"
+#define AUTHOR	 "Roy Coates/Jacob Phillips/John Bentas, 2018-21"
 
 /*
 
